@@ -1,0 +1,58 @@
+<project name="de.einwesen.portunnel" default="build.compile" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+  <description>
+    basic build file for porttunnel
+  </description>
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="build" location="bin"/>
+  <property name="dist" location="dist"/>
+  <property name="3rdlib" location="lib"/>
+	
+  <target name="build.init" depends="">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  	
+  	<!-- Download dependencies -->
+    <ivy:resolve file="${basedir}/ivy.xml" />
+    <ivy:retrieve pattern="${3rdlib}/[type]s/[artifact]-[revision].[ext]"/>
+  </target>
+
+  <target name="build.ivy.retrieve" depends="build.init" description="Resolve dependencies via IVY" >	  	
+	  	<!-- Download dependencies -->
+	    <ivy:resolve file="${basedir}/ivy.xml" />
+	    <ivy:retrieve pattern="${3rdlib}/[type]s/[artifact]-[revision].[ext]"/>
+  </target>
+	
+	
+  <target name="build.compile" depends="build.ivy.retrieve" description="compile the source">
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src}" destdir="${build}"/>
+  </target>
+
+  <target name="dist" depends="build.compile" description="generate the distribution">
+    <!-- Create the distribution directory -->
+  	<mkdir dir="${dist}"/>
+  	
+  	<mkdir dir="${dist}/lib"/>
+  	<copy todir="${dist}/lib">
+  		<fileset dir="${3rdlib}/jars">
+  			<include name="*.jar"/>
+  		</fileset>
+  	</copy>
+
+    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <jar jarfile="${dist}/portunnel-${DSTAMP}.jar" basedir="${build}">
+
+    </jar>  	
+
+  </target>
+
+  <target name="clean" description="clean up">
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  	<delete dir="${3rdlib}" />
+  </target>
+</project>
