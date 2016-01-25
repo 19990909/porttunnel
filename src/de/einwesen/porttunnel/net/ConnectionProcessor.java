@@ -48,7 +48,7 @@ public class ConnectionProcessor implements Runnable {
 		
 
 		try  {
-			srvSocket = new ServerSocket(localPort);
+			srvSocket = this.socketFactory.openSocket(remoteHost, remotePort);
 			LOGGER.info("Listening on: " + srvSocket.getLocalSocketAddress() );
 		} catch (IOException e) {
 			LOGGER.fatal("Can not open local socket", e, STACK_LOGLEVEL.TRACE);
